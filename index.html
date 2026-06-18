@@ -151,11 +151,22 @@ button{font-family:inherit;cursor:pointer}
   width:46px;text-align:center;font-family:var(--font-pixel);font-size:8px;color:#8fa8cf;
   background:rgba(13,20,34,.93);border-radius:6px;padding:4px 0;
 }
+#cqBattleZoom{position:fixed;left:14px;bottom:14px;z-index:60;display:none;flex-direction:column;gap:7px}
+#cqBattleZoom.on{display:flex}
+#cqBattleZoom button{
+  width:44px;height:44px;border-radius:10px;background:rgba(13,20,34,.93);
+  border:2px solid var(--cq-line);color:#cfe0ff;font-size:20px;font-family:var(--font-read);line-height:1;
+  display:flex;align-items:center;justify-content:center;box-shadow:0 2px 12px rgba(0,0,0,.55);
+}
+#cqBattleZoom button:active{transform:scale(.9)}
+#cqBattleZoom button:disabled{opacity:.32}
+#cqBattleZoom .lvl{width:44px;text-align:center;font-family:var(--font-pixel);font-size:8px;color:#8fa8cf;background:rgba(13,20,34,.93);border-radius:6px;padding:4px 0}
 @media(max-width:520px){
   .cq-zoomctl button{width:40px;height:40px;font-size:21px}.cq-zoomctl .lvl{width:40px}
   .cq-node{width:66px}
   .cq-node .pin{width:38px;height:38px;font-size:19px}
   .cq-node .lbl{font-size:11px;margin-top:3px}
+  #cqBattleZoom button{width:38px;height:38px;font-size:18px}#cqBattleZoom .lvl{width:38px}
 }
 .cq-clouds{position:absolute;inset:0;pointer-events:none;mix-blend-mode:multiply;opacity:.5}
 .cq-clouds i{position:absolute;width:240px;height:90px;border-radius:50%;background:radial-gradient(ellipse,rgba(10,16,28,.7),transparent 70%);animation:cqCloud 38s linear infinite}
@@ -195,7 +206,7 @@ button{font-family:inherit;cursor:pointer}
 .cq-zonecard .boss{color:#ff8888}
 .cq-zonecard .row{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
 /* ============ BATTLE ============ */
-#cqBattle{background:radial-gradient(circle at 50% 30%,rgba(var(--arena-rgb,40,80,140),.30) 0%,#070b12 75%);justify-content:flex-start}
+#cqBattle{background:radial-gradient(circle at 50% 30%,rgba(var(--arena-rgb,40,80,140),.30) 0%,#070b12 75%);justify-content:flex-start;--bz:1;overflow-y:auto}
 .cq-bt-top{width:100%;max-width:760px;padding:12px 14px 0}
 .cq-bossrow{display:flex;align-items:center;gap:12px}
 .cq-bossface{
@@ -218,11 +229,11 @@ button{font-family:inherit;cursor:pointer}
   padding:16px;box-shadow:0 10px 34px rgba(0,0,0,.6);
 }
 .cq-qnum{font-family:var(--font-pixel);font-size:10px;color:#7e96c2;margin-bottom:10px}
-.cq-qtext{font-size:23px;color:#eef4ff;margin-bottom:14px;line-height:1.3}
+.cq-qtext{font-size:calc(23px * var(--bz,1));color:#eef4ff;margin-bottom:14px;line-height:1.3}
 .cq-answers{display:grid;grid-template-columns:1fr;gap:9px}
 @media(min-width:620px){.cq-answers{grid-template-columns:1fr 1fr}}
 .cq-ans{
-  font-family:var(--font-read);font-size:20px;text-align:left;color:#dce8ff;
+  font-family:var(--font-read);font-size:calc(20px * var(--bz,1));text-align:left;color:#dce8ff;
   background:#152038;border:2px solid #2c3f60;border-radius:8px;padding:11px 13px;
   transition:transform .08s,border-color .15s,background .15s;
 }
@@ -231,7 +242,7 @@ button{font-family:inherit;cursor:pointer}
 .cq-ans.bad{background:#3a1520;border-color:#ff5d6e;color:#ffd0d6}
 .cq-tipbox{
   margin-top:12px;border-left:4px solid var(--cq-gold);background:rgba(240,200,64,.08);
-  padding:10px 12px;border-radius:0 8px 8px 0;font-size:19px;color:#ffe9b0;display:none;
+  padding:10px 12px;border-radius:0 8px 8px 0;font-size:calc(19px * var(--bz,1));color:#ffe9b0;display:none;
 }
 .cq-tipbox.on{display:block;animation:cqFadeDown .3s both}
 .cq-tipbox b{color:var(--cq-gold-bright)}
@@ -308,7 +319,7 @@ button{font-family:inherit;cursor:pointer}
 .cq-lifelines{display:flex;gap:8px}
 .cq-lifelines button{font-family:var(--font-pixel);font-size:9px;color:var(--cq-gold);background:#152038;border:1px solid var(--cq-gold);border-radius:5px;padding:7px 10px;letter-spacing:1px}
 .cq-lifelines button:disabled{opacity:.35;border-color:#445566;color:#7788aa}
-.cq-scene{position:relative;height:clamp(150px,23vh,210px);border:2px solid var(--cq-line);border-radius:10px;overflow:hidden;background:#0a0f1c}
+.cq-scene{position:relative;height:calc(clamp(150px,23vh,210px) * var(--bz,1));border:2px solid var(--cq-line);border-radius:10px;overflow:hidden;background:#0a0f1c}
 .cq-scene.danger{border-color:#ff5d6e;animation:cqDangerPulse .8s infinite}
 @keyframes cqDangerPulse{0%,100%{box-shadow:0 0 8px rgba(255,40,60,.35)}50%{box-shadow:0 0 24px rgba(255,40,60,.85)}}
 .cq-scene.shake{animation:cqShake .4s}
@@ -851,6 +862,12 @@ button{font-family:inherit;cursor:pointer}
 </div>
 <!-- toast + how to -->
 <button id="cqMusicBtn" title="Music on/off">🔊</button>
+<div id="cqBattleZoom">
+  <button id="cqBZIn" title="Bigger">+</button>
+  <button id="cqBZFit" title="Reset size">⊡</button>
+  <button id="cqBZOut" title="Smaller">−</button>
+  <div class="lvl" id="cqBZLvl">1x</div>
+</div>
 <div id="cqAttractBanner">🎮 DEMO MODE — TAP ANYWHERE TO PLAY</div>
 <div id="cqToast"></div>
 <div id="cqResetOv">
@@ -1198,6 +1215,7 @@ function show(id){
   el(id).classList.add('on');
   if(MROUTE[id]&&MUSIC.cur()!==MROUTE[id])MUSIC.play(MROUTE[id]);
   if(id==='cqMap')applyZoom();
+  el('cqBattleZoom').classList.toggle('on',id==='cqBattle');
   if(id==='cqTitle')armAttract();else if(window.ATTRACT&&!ATTRACT.on)clearTimeout(ATTRACT.t);
 }
 function toast(msg){
@@ -1254,6 +1272,17 @@ function applyZoom(){
   if(bo)bo.disabled=mapZoom<=ZOOM_MIN+0.01;
 }
 function setZoom(z){cancelFollow();mapZoom=Math.max(ZOOM_MIN,Math.min(ZOOM_MAX,z));applyZoom();}
+/* ---- battle zoom (scene + question/answer text) ---- */
+var battleZoom=1,BZ_MIN=0.85,BZ_MAX=1.6;
+function applyBattleZoom(){
+  el('cqBattle').style.setProperty('--bz',battleZoom);
+  var lv=el('cqBZLvl');if(lv)lv.textContent=(Math.round(battleZoom*100)/100)+'x';
+  var bi=el('cqBZIn'),bo=el('cqBZOut');
+  if(bi)bi.disabled=battleZoom>=BZ_MAX-0.01;
+  if(bo)bo.disabled=battleZoom<=BZ_MIN+0.01;
+  requestAnimationFrame(function(){var c=el('cqBgCanvas');if(c&&c.clientWidth){c.width=c.clientWidth;c.height=c.clientHeight;}});
+}
+function setBattleZoom(z){battleZoom=Math.max(BZ_MIN,Math.min(BZ_MAX,Math.round(z*100)/100));applyBattleZoom();}
 function placeAvatar(x,y,instant){
   var a=el('cqAvatar');
   if(instant){a.style.transition='none';}
@@ -1693,6 +1722,7 @@ function startBattle(z){
   el('cqPhotoFin').classList.remove('on');
   setBattleTrack(z.id);
   show('cqBattle');
+  battleZoom=1;applyBattleZoom();
   MUSIC.setRate(1);
   if(MUSIC.isOn())MUSIC.play('battle');
   var cv=el('cqBgCanvas');cv.width=cv.clientWidth||800;cv.height=cv.clientHeight||180;
@@ -2129,6 +2159,9 @@ el('cqZoomOut').addEventListener('click',function(e){e.stopPropagation();sfx.cli
 el('cqZoomFit').addEventListener('click',function(e){e.stopPropagation();sfx.click();setZoom(ZOOM_MIN);
   var w=el('cqMapWrap');w.scrollLeft=(w.scrollWidth-w.clientWidth)/2;w.scrollTop=(w.scrollHeight-w.clientHeight)/2;});
 window.addEventListener('resize',function(){if(el('cqMap').classList.contains('on'))applyZoom();});
+el('cqBZIn').addEventListener('click',function(e){e.stopPropagation();sfx.click();setBattleZoom(battleZoom+0.15);});
+el('cqBZOut').addEventListener('click',function(e){e.stopPropagation();sfx.click();setBattleZoom(battleZoom-0.15);});
+el('cqBZFit').addEventListener('click',function(e){e.stopPropagation();sfx.click();setBattleZoom(1);});
 el('cqBtnHow').addEventListener('click',function(){sfx.click();el('cqHow').classList.add('on');});
 el('cqMapHow').addEventListener('click',function(){sfx.click();el('cqHow').classList.add('on');});
 el('cqHowClose').addEventListener('click',function(){sfx.click();el('cqHow').classList.remove('on');});

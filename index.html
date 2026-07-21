@@ -5,8 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#070b12">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ChemQuest">
+<meta name="application-name" content="ChemQuest">
 <title>ChemQuest Upstate — Discover Your Future in Chemistry</title>
+<link rel="apple-touch-icon" id="cqAppleIcon">
+<link rel="icon" id="cqFavicon">
+<link rel="manifest" id="cqManifest">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Cinzel+Decorative:wght@700;900&display=swap" rel="stylesheet">
@@ -276,6 +282,25 @@ button{font-family:inherit;cursor:pointer}
   background:#0e1a30;border:2px solid var(--cq-gold);color:#ffd700;font-size:20px;
   display:flex;align-items:center;justify-content:center;box-shadow:0 0 14px rgba(240,200,64,.35);
 }
+#cqInstallChip{
+  position:fixed;left:50%;bottom:16px;transform:translateX(-50%);z-index:9420;display:none;
+  align-items:center;gap:8px;font-family:var(--font-pixel);font-size:11px;color:#081018;letter-spacing:1px;
+  background:linear-gradient(180deg,var(--cq-gold-bright),#c89a18);border:0;border-radius:8px;padding:12px 16px;
+  box-shadow:0 4px 0 #7a5c08,0 0 22px rgba(255,215,0,.5);animation:cqPulse 1.8s infinite;max-width:92vw;
+}
+#cqInstallChip.on{display:inline-flex}
+#cqInstallChip .x{margin-left:4px;font-size:13px;opacity:.6}
+#cqIosInstall{
+  position:fixed;inset:0;z-index:9520;display:none;align-items:center;justify-content:center;
+  background:rgba(4,7,12,.92);padding:20px;text-align:center;
+}
+#cqIosInstall.on{display:flex}
+#cqIosInstall .box{background:#0d1422;border:2px solid var(--cq-gold);border-radius:12px;padding:22px;max-width:400px}
+#cqIosInstall h3{font-family:var(--font-pixel);font-size:13px;color:var(--cq-gold);margin-bottom:14px}
+#cqIosInstall p{font-size:20px;color:#dce8ff;margin:10px 0;line-height:1.4}
+#cqIosInstall b{color:#ffe9b0}
+#cqIosInstall .shareicon{display:inline-block;width:26px;height:26px;vertical-align:middle;
+  border:2px solid #5ec8ff;border-radius:6px;color:#5ec8ff;font-size:16px;line-height:22px}
 #cqAttractBanner{
   position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:9450;display:none;
   font-family:var(--font-pixel);font-size:clamp(11px,2.6vw,15px);color:#081018;letter-spacing:2px;
@@ -861,6 +886,17 @@ button{font-family:inherit;cursor:pointer}
   </div>
 </div>
 <!-- toast + how to -->
+<button id="cqInstallChip">📲 Install ChemQuest<span class="x">✕</span></button>
+<div id="cqIosInstall">
+  <div class="box">
+    <h3>📲 ADD TO HOME SCREEN</h3>
+    <p>Install ChemQuest as an app on your iPhone:</p>
+    <p>1. Tap the <span class="shareicon">⬆</span> <b>Share</b> button below</p>
+    <p>2. Scroll down and tap <b>"Add to Home Screen"</b></p>
+    <p>3. Tap <b>Add</b> — done! 🧪</p>
+    <div style="margin-top:16px"><button class="cq-btn" id="cqIosClose">GOT IT</button></div>
+  </div>
+</div>
 <button id="cqMusicBtn" title="Music on/off">🔊</button>
 <div id="cqBattleZoom">
   <button id="cqBZIn" title="Bigger">+</button>
@@ -2339,6 +2375,77 @@ document.addEventListener('keydown',function(e){
   if(el('cqTitle').classList.contains('on'))armAttract();
 },true);
 armAttract();
+/* ============ PWA — installable "app" ============ */
+(function(){
+  /* draw the app icon on a canvas at any size (pixel flask on gold-rimmed dark tile) */
+  function drawIcon(size){
+    var c=document.createElement('canvas');c.width=c.height=size;
+    var x=c.getContext('2d'),s=size/16;
+    /* background */
+    var g=x.createLinearGradient(0,0,0,size);g.addColorStop(0,'#101a2e');g.addColorStop(1,'#070b12');
+    x.fillStyle=g;x.fillRect(0,0,size,size);
+    /* gold border ring */
+    x.strokeStyle='#f0c840';x.lineWidth=s*0.7;x.strokeRect(s*0.6,s*0.6,size-s*1.2,size-s*1.2);
+    function px(gx,gy,gw,gh,col){x.fillStyle=col;x.fillRect(gx*s,gy*s,gw*s,gh*s);}
+    /* flask (from the title-screen sprite, scaled to the 16-grid) */
+    px(7,2,2,4,'#cfe0ff');
+    px(5,6,6,1,'#cfe0ff');
+    px(4,7,8,1,'#cfe0ff');
+    px(3,8,10,5,'#cfe0ff');
+    px(4,9,8,4,'#39d98a');
+    px(5,8,2,1,'#7df0b5');
+    px(3,13,10,1,'#9fb6dd');
+    px(8,5,1,1,'#7df0b5');
+    px(9,3,1,1,'#7df0b5');
+    return c.toDataURL('image/png');
+  }
+  var icon192=drawIcon(192),icon512=drawIcon(512),icon180=drawIcon(180);
+  var al=el('cqAppleIcon');if(al)al.setAttribute('href',icon180);
+  var fv=el('cqFavicon');if(fv)fv.setAttribute('href',icon192);
+  /* build manifest with ABSOLUTE urls (data-url manifests can't resolve relative paths) */
+  var base=location.href.split('?')[0].split('#')[0];
+  var dir=base.substring(0,base.lastIndexOf('/')+1);
+  var manifest={
+    name:'ChemQuest Upstate',short_name:'ChemQuest',
+    description:'Discover real chemistry careers in Upstate SC.',
+    id:dir,start_url:base,scope:dir,display:'standalone',orientation:'any',
+    background_color:'#070b12',theme_color:'#070b12',
+    icons:[
+      {src:icon192,sizes:'192x192',type:'image/png',purpose:'any'},
+      {src:icon512,sizes:'512x512',type:'image/png',purpose:'any'},
+      {src:icon512,sizes:'512x512',type:'image/png',purpose:'maskable'}
+    ]
+  };
+  var mf=el('cqManifest');
+  if(mf)mf.setAttribute('href','data:application/manifest+json,'+encodeURIComponent(JSON.stringify(manifest)));
+  /* service worker for offline (http/https only; harmless if sw.js is absent) */
+  if('serviceWorker' in navigator && location.protocol.indexOf('http')===0){
+    window.addEventListener('load',function(){
+      navigator.serviceWorker.register('sw.js').catch(function(){});
+    });
+  }
+  /* install affordance */
+  function standalone(){return window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;}
+  var isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)&&!window.MSStream;
+  var chip=el('cqInstallChip'),deferred=null;
+  function showChip(txt){if(standalone())return;if(chip){chip.firstChild.textContent=txt;chip.classList.add('on');}}
+  window.addEventListener('beforeinstallprompt',function(e){
+    e.preventDefault();deferred=e;showChip('📲 Install ChemQuest');
+  });
+  window.addEventListener('appinstalled',function(){if(chip)chip.classList.remove('on');});
+  if(isIOS&&!standalone()){setTimeout(function(){showChip('📲 Add ChemQuest to Home Screen');},1200);}
+  if(chip){
+    chip.addEventListener('click',function(e){
+      /* the ✕ dismisses */
+      if(e.target&&e.target.classList&&e.target.classList.contains('x')){chip.classList.remove('on');return;}
+      sfx&&sfx.click&&sfx.click();
+      if(deferred){deferred.prompt();deferred=null;chip.classList.remove('on');}
+      else if(isIOS){el('cqIosInstall').classList.add('on');}
+      else{chip.classList.remove('on');}
+    });
+  }
+  var ic=el('cqIosClose');if(ic)ic.addEventListener('click',function(){el('cqIosInstall').classList.remove('on');});
+})();
 </script>
 </body>
 </html>
